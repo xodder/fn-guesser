@@ -66,7 +66,7 @@ namespace xod
         return row_swap_count;
     }
 
-    double *guass_jordan_elimination(double *matrix, int row_count, int col_count)
+    std::vector<double> guass_jordan_elimination(double *matrix, int row_count, int col_count)
     {
         guassian_elimination(matrix, row_count, col_count);
 
@@ -100,12 +100,13 @@ namespace xod
             }
         }
 
-        double solutions[row_count];
+        std::vector<double> solutions;
 
         for (int i = 0; i < row_count; i++)
         {
-            solutions[i] = matrix[i * col_count + (col_count - 1)];
+            solutions.push_back(matrix[i * col_count + (col_count - 1)]);
         }
+
         return solutions;
     }
 
