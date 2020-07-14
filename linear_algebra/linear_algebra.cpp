@@ -1,33 +1,32 @@
 #include <cmath>
+#include "linear_algebra.h"
 
 namespace xod
 {
-    // entries should be an augumented matrix
-    template <typename number_t = double>
-    int guassian_elimination(number_t *entries, int row_count, int col_count)
+    int guassian_elimination(double *matrix, int row_count, int col_count)
     {
         int row_swap_count = 0;
         for (int row = 0; row < row_count; row++)
         {
-            int expected_pivot_column = row;
-            number_t pivot = entries[row * col_count + expected_pivot_column];
-            int actual_pivot_column = expected_pivot_column;
-            while (!(pivot = entries[row * col_count + actual_pivot_column]))
-                actual_pivot_column++;
+            const int expected_pivot_col = row;
+            double pivot = matrix[row * col_count + expected_pivot_col];
+            int actual_pivot_col = expected_pivot_col;
+            while (!(pivot = matrix[row * col_count + actual_pivot_col]))
+                actual_pivot_col++;
 
             // check for swapping instances
             int row_to_swap_with = row;
 
             for (int i = row + 1; i < row_count; ++i)
             {
-                for (int j = expected_pivot_column; j <= actual_pivot_column; ++j)
+                for (int j = expected_pivot_col; j <= actual_pivot_col; ++j)
                 {
-                    number_t rival_entry = entries[i * col_count + j];
+                    const double rival_entry = matrix[i * col_count + j];
                     if (pivot < rival_entry)
                     {
                         row_to_swap_with = i;
                         pivot = rival_entry;
-                        actual_pivot_column = j;
+                        actual_pivot_col = j;
                         break;
                     }
                 }
@@ -44,9 +43,9 @@ namespace xod
                 row_swap_count++;
                 for (int j = 0; j < col_count; ++j)
                 {
-                    number_t tmp = entries[row * col_count + j];
-                    entries[row * col_count + j] = entries[row_to_swap_with * col_count + j];
-                    entries[row_to_swap_with * col_count + j] = tmp;
+                    const double tmp = matrix[row * col_count + j];
+                    matrix[row * col_count + j] = matrix[row_to_swap_with * col_count + j];
+                    matrix[row_to_swap_with * col_count + j] = tmp;
                 }
             }
 
@@ -55,11 +54,11 @@ namespace xod
             // r2 -> r2 - (d/a) * r1
             for (int i = row + 1; i < row_count; ++i)
             {
-                number_t rival_pivot = entries[i * col_count + actual_pivot_column];
-                double factor = rival_pivot / (double)pivot;
-                for (int j = actual_pivot_column; j < col_count; ++j)
+                const double rival_pivot = matrix[i * col_count + actual_pivot_col];
+                const double factor = rival_pivot / (double)pivot;
+                for (int j = actual_pivot_col; j < col_count; ++j)
                 {
-                    entries[i * col_count + j] -= factor * entries[row * col_count + j];
+                    matrix[i * col_count + j] -= factor * matrix[row * col_count + j];
                 }
             }
         }
@@ -67,17 +66,15 @@ namespace xod
         return row_swap_count;
     }
 
-    // entries should be an augumented matrix
-    template <typename number_t = double>
-    void guass_jordan_elimination(number_t *entries, int row_count, int col_count)
+    double *guass_jordan_elimination(double *matrix, int row_count, int col_count)
     {
-        guassian_elimination<number_t>(entries, row_count, col_count);
+        guassian_elimination(matrix, row_count, col_count);
 
         // do backward reduction starting from the down to top
         for (int row = row_count - 1; row >= 0; --row)
         {
             int pivot_column = row;
-            number_t pivot = entries[row * col_count + pivot_column];
+            double pivot = matrix[row * col_count + pivot_column];
 
             if (pivot == 0)
             {
@@ -87,11 +84,11 @@ namespace xod
             // eliminate pivot term in the upper rows
             for (int i = row - 1; i >= 0; --i)
             {
-                number_t rival_pivot = entries[i * col_count + pivot_column];
+                double rival_pivot = matrix[i * col_count + pivot_column];
                 double factor = rival_pivot / (double)pivot;
                 for (int j = 0; j < col_count; ++j)
                 {
-                    entries[i * col_count + j] -= factor * entries[row * col_count + j];
+                    matrix[i * col_count + j] -= factor * matrix[row * col_count + j];
                 }
             }
 
@@ -99,19 +96,26 @@ namespace xod
             double divisor = 1 / (double)pivot;
             for (int j = 0; j < col_count; ++j)
             {
-                entries[row * col_count + j] *= divisor;
+                matrix[row * col_count + j] *= divisor;
             }
         }
+
+        double solutions[row_count];
+
+        for (int i = 0; i < row_count; i++)
+        {
+            solutions[i] = matrix[i * col_count + (col_count - 1)];
+        }
+        return solutions;
     }
 
-    // entries should be a square matrix
-    double determinant_with_guassian_elimination(double *entries, int size)
+    double determinant(double *matrix, int size)
     {
-        int swap_count = guassian_elimination(entries, size, size);
+        int swap_count = guassian_elimination(matrix, size, size);
         double determinant = std::pow(-1, swap_count);
         for (int i = 0; i < size; i++)
         {
-            determinant *= entries[i * size + i];
+            determinant *= matrix[i * size + i];
         }
         return determinant;
     }
