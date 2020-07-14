@@ -5,7 +5,7 @@
 
 int main(int argc, char **argv)
 {
-    xod::guess_function({1, 2, 3, 4}, {2, 3, 4, 5});
+    xod::guess_function({1, 2, 3, 4}, {5, 10, 17, 26});
 
     return 0;
 }
