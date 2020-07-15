@@ -3,5 +3,5 @@
 
 namespace xod
 {
-    std::string guess_function(std::vector<int> inputs, std::vector<int> outputs);
+    std::string guess_function(std::vector<double> inputs, std::vector<double> outputs);
 } // namespace xod

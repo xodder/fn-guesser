@@ -79,7 +79,7 @@ namespace xod
         return result.str();
     }
 
-    std::string guess_function(std::vector<int> inputs, std::vector<int> outputs)
+    std::string guess_function(std::vector<double> inputs, std::vector<double> outputs)
     {
         const int input_size = inputs.size();
         const double min_allowed_error = 4;
