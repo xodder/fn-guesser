@@ -1,4 +1,4 @@
-DEPS=fraction/fraction.h \
+DEPS=fraction/fraction.cpp \
 		argh/argh.cpp \
 		linear_algebra/linear_algebra.cpp \
 		function_guesser/function_guesser.cpp
