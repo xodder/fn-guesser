@@ -3,6 +3,7 @@
 #include <cmath>
 #include "function_guesser.h"
 #include "../linear_algebra/linear_algebra.h"
+#include "../fraction/fraction.h"
 
 // #define VERBOSE 0
 
@@ -30,9 +31,22 @@ namespace xod
                     result << (!is_first ? " + " : "");
                 }
 
-                if (coefficient != 1)
+                // can apply fraction here
+                // double value = std::round(std::abs(coefficient) * 1e4) * 1e-4;
+
+                xod::fraction value = std::abs(coefficient);
+
+                // std::cout << value << std::endl;
+
+                bool show_value = value != 1.0 || exponent == 0;
+                bool show_braces = exponent > 0 && value.denominator() != 1 && value != 1.0;
+
+                // outputs [(]? xxx [)]?
+                if (show_value)
                 {
-                    result << std::abs(coefficient);
+                    result << (show_braces ? "[" : "");
+                    result << value;
+                    result << (show_braces ? "]" : "");
                 }
 
                 if (exponent > 0)
@@ -81,6 +95,12 @@ namespace xod
 
     std::string guess_function(std::vector<double> inputs, std::vector<double> outputs)
     {
+        if (inputs.size() != outputs.size())
+        {
+            std::cout << "inputs size not same as outputs size" << std::endl;
+            return "";
+        }
+
         const int input_size = inputs.size();
         const double min_allowed_error = 4;
         const double max_allowed_error = 1e-10;
