@@ -13,7 +13,7 @@ xod::argh::~argh()
     // remove vars
 }
 
-inline bool xod::argh::has(const char *key)
+bool xod::argh::has(const char *key)
 {
     return _named_params.count(key) == 1;
 }

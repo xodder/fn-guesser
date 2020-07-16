@@ -35,7 +35,7 @@ namespace xod
         ~argh();
 
     public:
-        inline bool has(const char* key);
+        bool has(const char* key);
         const char* get(const char* key);
         const bool get_bool(const char* key);
         const int get_int(const char* key);
